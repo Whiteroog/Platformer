@@ -1,9 +1,10 @@
 using System;
+using This.Characters.Scripts;
 using UnityEngine;
 
 namespace This.Characters.Hero.Scripts
 {
-    public class Hero : MonoBehaviour
+    public class Hero : Entity
     {
         [SerializeField] private int lives = 5;
         
@@ -15,10 +16,17 @@ namespace This.Characters.Hero.Scripts
 
         [SerializeField] private Animator anim;
 
-        [SerializeField] private Vector2 offsetCircleOverlap = new Vector2(0f, 0.2f);
-        [SerializeField] private float radiusCircleOverlap = 0.35f;
+        [SerializeField] private Vector2 offsetOverlapCircle = new Vector2(0f, 0.2f);
+        [SerializeField] private float radiusOverlapCircle = 0.35f;
+        
+        public static Hero Instance { get; set; }
 
         private bool _isGrounded = false;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         private void FixedUpdate()
         {
@@ -62,8 +70,13 @@ namespace This.Characters.Hero.Scripts
 
         private void CheckGround()
         {
-            Collider2D[] colliders = Physics2D.OverlapCircleAll((Vector2)transform.position + offsetCircleOverlap, radiusCircleOverlap);
+            Collider2D[] colliders = Physics2D.OverlapCircleAll((Vector2)transform.position + offsetOverlapCircle, radiusOverlapCircle);
             _isGrounded = colliders.Length > 1; // with considering character collider
+        }
+
+        public override void GetDamage()
+        {
+            lives -= 1;
         }
     }
 }
